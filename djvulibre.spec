@@ -1,10 +1,10 @@
-# $Id: djvulibre.spec,v 1.3 2004/11/09 02:45:25 cvsextras Exp $
+# $Id: djvulibre.spec,v 1.4 2004/11/09 02:45:31 cvsextras Exp $
 # Authority: matthias
 
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.14
-Release: 1.1.fc1.fr
+Release: 1.1.fc2.fr
 License: GPL
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -65,6 +65,9 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 %exclude %{_libdir}/*.la
 %{_libdir}/*.so*
 %{_libdir}/*/plugins/*.so
+%{_datadir}/application-registry/djvu.applications
+%{_datadir}/applications/djview.desktop
+%{_datadir}/icons/hicolor/??x??/mimetypes/djvu.png
 %{_datadir}/mime-info/djvu.*
 %{_datadir}/djvu/
 %{_datadir}/pixmaps/djvu.png
