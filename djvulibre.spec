@@ -1,10 +1,10 @@
-# $Id: djvulibre.spec,v 1.5 2004/11/16 17:36:36 thias Exp $
+# $Id: djvulibre.spec,v 1.6 2005/02/14 11:31:45 dwmw2 Exp $
 # Authority: matthias
 
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.14
-Release: 3
+Release: 4
 License: GPL
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -77,6 +77,7 @@ update-desktop-database /usr/share/applications || :
 %{_datadir}/applications/djview.desktop
 %{_datadir}/icons/hicolor/??x??/mimetypes/djvu.png
 %{_datadir}/mime-info/djvu.*
+%{_datadir}/mimelnk/image/x-djvu.desktop
 %{_datadir}/djvu/
 %{_datadir}/pixmaps/djvu.png
 %{_mandir}/man1/*
@@ -84,6 +85,9 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Mon Feb 14 2005 David Woodhouse <dwmw2@infradead.org> 3.5.14-4
+- Include %%{_datadir}/mimelnk/image/x-djvu.desktop
+
 * Tue Nov 16 2004 Matthias Saou <http://freshrpms.net/> 3.5.14-3
 - Bump release to provide Extras upgrade path.
 
