@@ -1,8 +1,8 @@
-# $Id: djvulibre.spec,v 1.1 2004/11/09 02:45:13 cvsextras Exp $
+# $Id: djvulibre.spec,v 1.2 2004/11/09 02:45:19 cvsextras Exp $
 
 Summary: DjVu viewers, encoders and utilities.
 Name: djvulibre
-Version: 3.5.10
+Version: 3.5.11
 Release: fr1
 License: GPL
 Group: Applications/Publishing
@@ -42,7 +42,7 @@ DjVulibre-3.5 contains:
 
 %build
 %configure
-make
+make %{?_smp_mflags}
 
 %install
 rm -rf %{buildroot}
@@ -73,6 +73,12 @@ rm -rf %{buildroot}
 %{_mandir}/man?/*
 
 %changelog
+* Thu May  1 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
+- Update to 3.5.11.
+
+* Mon Mar 31 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
+- Rebuilt for Red Hat Linux 9.
+
 * Thu Mar 20 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
 - Update to 3.5.10.
 
