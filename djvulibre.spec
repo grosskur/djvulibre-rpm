@@ -1,6 +1,3 @@
-# $Id: djvulibre.spec,v 1.6 2005/02/14 11:31:45 dwmw2 Exp $
-# Authority: matthias
-
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.14
@@ -16,7 +13,7 @@ BuildRequires: libstdc++-devel, gcc-c++, mozilla
 Provides: mozilla-djvulibre = %{version}-%{release}
 Provides: djvulibre-devel = %{version}-%{release}
 
-%description 
+%description
 DjVu is a web-centric format and software platform for distributing documents
 and images.  DjVu content downloads faster, displays and renders faster, looks
 nicer on a screen, and consume less client resources than competing formats.
