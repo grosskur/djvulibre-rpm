@@ -1,7 +1,8 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.14
-Release: 4
+Release: 5
+
 License: GPL
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -82,6 +83,9 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Fri Apr  7 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
+- rebuilt
+
 * Mon Feb 14 2005 David Woodhouse <dwmw2@infradead.org> 3.5.14-4
 - Include %%{_datadir}/mimelnk/image/x-djvu.desktop
 
