@@ -1,16 +1,17 @@
-# $Id: djvulibre.spec,v 1.2 2004/11/09 02:45:19 cvsextras Exp $
+# $Id: djvulibre.spec,v 1.3 2004/11/09 02:45:25 cvsextras Exp $
+# Authority: matthias
 
-Summary: DjVu viewers, encoders and utilities.
+Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
-Version: 3.5.11
-Release: fr1
+Version: 3.5.14
+Release: 1.1.fc1.fr
 License: GPL
 Group: Applications/Publishing
-Source: http://prdownloads.sourceforge.net/djvu/djvulibre-%{version}.tar.gz
 URL: http://djvu.sourceforge.net/
-BuildRoot: %{_tmppath}/%{name}-root
-Requires: qt, libstdc++
-BuildRequires: qt-devel, libstdc++-devel
+Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildRequires: XFree86-devel, qt-devel, libjpeg-devel
+BuildRequires: libstdc++-devel, gcc-c++, mozilla
 
 %description 
 DjVu is a web-centric format and software platform for distributing documents
@@ -27,65 +28,86 @@ GNU GPL in October 2000.  DjVuLibre (which means free DjVu), is an enhanced
 version of that code maintained by the original inventors of DjVu. It is
 compatible with version 3.5 of the LizardTech DjVu software suite.
 
-DjVulibre-3.5 contains:
-- a standalone DjVu viewer based on the Qt library. 
-- A browser plugin that works with most Unix browsers.
-- A full-fledged wavelet-based compressor for pictures. 
-- A simple compressor for bitonal (black and white) scanned pages. 
-- A compressor for palettized images (a la GIF/PNG). 
-- A set of utilities to manipulate and assemble DjVu images and documents. 
-- A set of decoders to convert DjVu to a number of other formats. 
-- An up-to-date version of the C++ DjVu Reference Library.
 
 %prep
-%setup -q
+%setup
+
 
 %build
 %configure
-make %{?_smp_mflags}
+%{__make} %{?_smp_mflags}
+
 
 %install
-rm -rf %{buildroot}
+%{__rm} -rf %{buildroot}
 %makeinstall
-mkdir -p %{buildroot}%{_libdir}/mozilla/plugins
-ln -s ../../netscape/plugins/nsdejavu.so %{buildroot}%{_libdir}/mozilla/plugins/
+#%{__mkdir_p} %{buildroot}%{_libdir}/mozilla/plugins
+#%{__ln_s} ../../netscape/plugins/nsdejavu.so \
+#    %{buildroot}%{_libdir}/mozilla/plugins/
 
-# Quick fix to stop ldconfig from complaining
-find %{buildroot}%{_libdir} -name "*.so*" -exec chmod 755 {} \;
-
-# Quick cleanup of the docs
-rm -rf doc/CVS || :
 
 %clean
-rm -rf %{buildroot}
+%{__rm} -rf %{buildroot}
 
-%post -p /sbin/ldconfig
 
-%postun -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+
+%postun
+/sbin/ldconfig
+
 
 %files
-%defattr(-, root, root)
-%doc README COPYRIGHT COPYING INSTALL NEWS TODO doc
+%defattr(-, root, root, 0755)
+%doc README COPYRIGHT COPYING NEWS TODO doc
 %{_bindir}/*
+%{_includedir}/libdjvu/
+%exclude %{_libdir}/*.la
 %{_libdir}/*.so*
 %{_libdir}/*/plugins/*.so
-%{_datadir}/djvu
-%{_mandir}/man?/*
+%{_datadir}/mime-info/djvu.*
+%{_datadir}/djvu/
+%{_datadir}/pixmaps/djvu.png
+%{_mandir}/man1/*
+%lang(ja) %{_mandir}/ja/man1/*
+
 
 %changelog
-* Thu May  1 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
+* Mon Aug 16 2004 Matthias Saou <http://freshrpms.net/> 3.5.14-1
+- Update to 3.5.14.
+- Added newly introduced files to the package.
+
+* Mon May 17 2004 Matthias Saou <http://freshrpms.net/> 3.5.13-1
+- Update to 3.5.13.
+- Added new Japanese man pages.
+
+* Wed May  5 2004 Matthias Saou <http://freshrpms.net/> 3.5.12-4
+- Changed the plugin directory for mozilla to %{_libdir}/mozilla,
+  as suggested by Matteo Corti.
+- Shortened the description.
+
+* Wed Jan 14 2004 Matthias Saou <http://freshrpms.net/> 3.5.12-3
+- Added XFree86-devel and libjpeg-devel build requirements.
+
+* Fri Nov  7 2003 Matthias Saou <http://freshrpms.net/> 3.5.12-2
+- Rebuild for Fedora Core 1.
+
+* Mon Sep  1 2003 Matthias Saou <http://freshrpms.net/>
+- Update to 3.5.12.
+
+* Thu May  1 2003 Matthias Saou <http://freshrpms.net/>
 - Update to 3.5.11.
 
-* Mon Mar 31 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
+* Mon Mar 31 2003 Matthias Saou <http://freshrpms.net/>
 - Rebuilt for Red Hat Linux 9.
 
-* Thu Mar 20 2003 Matthias Saou <matthias.saou@est.une.marmotte.net>
+* Thu Mar 20 2003 Matthias Saou <http://freshrpms.net/>
 - Update to 3.5.10.
 
-* Wed Jul 24 2002 Matthias Saou <matthias.saou@est.une.marmotte.net>
+* Wed Jul 24 2002 Matthias Saou <http://freshrpms.net/>
 - Update to 3.5.7.
 
-* Fri Jul 19 2002 Matthias Saou <matthias.saou@est.une.marmotte.net>
+* Fri Jul 19 2002 Matthias Saou <http://freshrpms.net/>
 - Spec file cleanup and fixes.
 
 * Wed May 29 2002 Leon Bottou <leon@bottou.org>
