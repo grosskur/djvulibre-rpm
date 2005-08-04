@@ -1,14 +1,15 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.15
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+Patch0: djvulibre-3.5.15-gcc401.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: xorg-x11-devel, qt-devel, libjpeg-devel, libtiff-devel
-BuildRequires: mozilla, redhat-menus
+BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
 # Provide these here, they're so small, it's not worth splitting them out
 Provides: mozilla-djvulibre = %{version}-%{release}
 Provides: djvulibre-devel = %{version}-%{release}
@@ -31,6 +32,7 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 
 %prep
 %setup
+%patch0 -p1 -b .gcc401
 
 
 %build
@@ -94,6 +96,11 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-2
+- Include djvulibre-3.5.15-gcc401.patch to fix compilation with gcc 4.0.1.
+- Add hicolor-icon-theme build req for /usr/share/icons/hicolor/48x48/mimetypes
+  to exist.
+
 * Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-1
 - Update to 3.5.15.
 - Move desktop icon to datadir/icons/hicolor.
