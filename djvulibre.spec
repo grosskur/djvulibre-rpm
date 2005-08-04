@@ -1,15 +1,14 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
-Version: 3.5.14
-Release: 5
-
+Version: 3.5.15
+Release: 1%{?dist}
 License: GPL
 Group: Applications/Publishing
-URL: http://djvu.sourceforge.net/
+URL: http://djvulibre.djvuzone.org/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: XFree86-devel, qt-devel, libjpeg-devel
-BuildRequires: libstdc++-devel, gcc-c++, mozilla
+BuildRequires: xorg-x11-devel, qt-devel, libjpeg-devel, libtiff-devel
+BuildRequires: mozilla, redhat-menus
 # Provide these here, they're so small, it's not worth splitting them out
 Provides: mozilla-djvulibre = %{version}-%{release}
 Provides: djvulibre-devel = %{version}-%{release}
@@ -42,12 +41,18 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 %install
 %{__rm} -rf %{buildroot}
 %makeinstall
-%{__mkdir_p} %{buildroot}%{_libdir}/mozilla/plugins
-%{__ln_s} ../../netscape/plugins/nsdejavu.so \
-    %{buildroot}%{_libdir}/mozilla/plugins/
+# Move plugin from the netscape directory to the main mozilla one
+%{__mkdir_p} %{buildroot}%{_libdir}/mozilla/plugins/
+%{__mv} %{buildroot}%{_libdir}/netscape/plugins/nsdejavu.so \
+        %{buildroot}%{_libdir}/mozilla/plugins/nsdejavu.so
 
-# Fix for the libs to get stripped correctly (debuginfo)
+# Fix for the libs to get stripped correctly (still required in 3.5.15)
 find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
+
+# Move menu entry pixmap to new location
+%{__mkdir_p} %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/
+%{__mv} %{buildroot}%{_datadir}/pixmaps/djvu.png \
+        %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/djvu.png
 
 
 %clean
@@ -56,35 +61,49 @@ find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
 
 %post
 /sbin/ldconfig
+gtk-update-icon-cache -q -f %{_datadir}/icons/hicolor || :
 update-desktop-database /usr/share/applications || :
 
 %postun
 /sbin/ldconfig
+gtk-update-icon-cache -q -f %{_datadir}/icons/hicolor || :
 update-desktop-database /usr/share/applications || :
 
 
 %files
 %defattr(-, root, root, 0755)
-%doc README COPYRIGHT COPYING NEWS TODO doc
+%doc README COPYRIGHT COPYING NEWS TODO doc/
 %{_bindir}/*
-%{_includedir}/libdjvu/
-%exclude %{_libdir}/*.la
-%{_libdir}/*.so*
-%{_libdir}/*/plugins/*.so
+%{_libdir}/*.so.*
+%{_libdir}/mozilla/plugins/nsdejavu.so
 %{_datadir}/application-registry/djvu.applications
 %{_datadir}/applications/djview.desktop
+%{_datadir}/icons/hicolor/??x??/apps/djvu.png
 %{_datadir}/icons/hicolor/??x??/mimetypes/djvu.png
-%{_datadir}/mime-info/djvu.*
-%{_datadir}/mimelnk/image/x-djvu.desktop
 %{_datadir}/djvu/
-%{_datadir}/pixmaps/djvu.png
+%{_datadir}/mime-info/djvu.*
 %{_mandir}/man1/*
 %lang(ja) %{_mandir}/ja/man1/*
 
+#files devel
+#defattr(-, root, root, 0755)
+%{_includedir}/libdjvu/
+%exclude %{_libdir}/*.la
+%{_libdir}/*.so
+
 
 %changelog
-* Fri Apr  7 2005 Michael Schwendt <mschwendt[AT]users.sf.net>
-- rebuilt
+* Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-1
+- Update to 3.5.15.
+- Move desktop icon to datadir/icons/hicolor.
+- Add gtk-update-icon-cache calls for the new icon.
+- Move browser plugin from netscape to mozilla directory instead of symlinking.
+- Clean build requirements and add libtiff-devel.
+- Add redhat-menus build req since it owns /etc/xdg/menus/applications.menu,
+  which the configure script checks to install the desktop file.
+
+* Tue May  3 2005 David Woodhouse <dwmw2@infradead.org> 3.5.14-6
+- Remove files that were installed only for older KDE versions.
 
 * Mon Feb 14 2005 David Woodhouse <dwmw2@infradead.org> 3.5.14-4
 - Include %%{_datadir}/mimelnk/image/x-djvu.desktop
