@@ -35,7 +35,8 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 
 %build
 %configure
-%{__make} %{?_smp_mflags}
+# In 3.5.14 %{?_smp_mflags} broke the build
+%{__make} OPTS="%{optflags}"
 
 
 %install
@@ -101,6 +102,7 @@ update-desktop-database /usr/share/applications || :
 - Clean build requirements and add libtiff-devel.
 - Add redhat-menus build req since it owns /etc/xdg/menus/applications.menu,
   which the configure script checks to install the desktop file.
+- Add OPTS to the make line (#156208 - Michael Schwendt).
 
 * Tue May  3 2005 David Woodhouse <dwmw2@infradead.org> 3.5.14-6
 - Remove files that were installed only for older KDE versions.
