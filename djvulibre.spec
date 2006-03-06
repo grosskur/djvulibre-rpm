@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.15
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
@@ -96,6 +96,9 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Mon Mar  6 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-3
+- FC5 rebuild.
+
 * Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-2
 - Include djvulibre-3.5.15-gcc401.patch to fix compilation with gcc 4.0.1.
 - Add hicolor-icon-theme build req for /usr/share/icons/hicolor/48x48/mimetypes
