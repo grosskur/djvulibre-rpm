@@ -96,7 +96,7 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
-* Mon Mar  6 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-3
+* Mon Mar  6 2006 Matthias Saou <http://freshrpms.net/> 3.5.15-3
 - FC5 rebuild.
 
 * Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-2
