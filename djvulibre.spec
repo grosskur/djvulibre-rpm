@@ -1,15 +1,21 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
-Version: 3.5.15
-Release: 3%{?dist}
+Version: 3.5.16
+Release: 1%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
-Patch0: djvulibre-3.5.15-gcc401.patch
+Patch0: djvulibre-3.5.16-extraqualif.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildRequires: xorg-x11-devel, qt-devel, libjpeg-devel, libtiff-devel
+BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
 BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
+# Use monolithic X up to FC4, and modular X for FC5+ and non-Fedora
+%if %{!?fedora:5}%{?fedora} >= 5
+BuildRequires: libXt-devel
+%else
+BuildRequires: xorg-x11-devel
+%endif
 # Provide these here, they're so small, it's not worth splitting them out
 Provides: mozilla-djvulibre = %{version}-%{release}
 Provides: djvulibre-devel = %{version}-%{release}
@@ -32,7 +38,7 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 
 %prep
 %setup
-%patch0 -p1 -b .gcc401
+%patch0 -p1 -b .extraqualif
 
 
 %build
@@ -96,8 +102,14 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
-* Mon Mar  6 2006 Matthias Saou <http://freshrpms.net/> 3.5.15-3
+* Mon Mar  6 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-2
 - FC5 rebuild.
+
+* Mon Jan 30 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-1
+- Update to 3.5.16.
+- Add conditional to build with/without modular X depending on FC version.
+- Remove no longer needed gcc4 patch.
+- Add extra qualification patch.
 
 * Thu Aug  4 2005 Matthias Saou <http://freshrpms.net/> 3.5.15-2
 - Include djvulibre-3.5.15-gcc401.patch to fix compilation with gcc 4.0.1.
