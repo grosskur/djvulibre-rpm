@@ -1,12 +1,11 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.16
-Release: 1%{?dist}
+Release: 3%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
-Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
-Patch0: djvulibre-3.5.16-extraqualif.patch
+Source: http://dl.sf.net/djvu/djvulibre-%{version}cvs.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
 BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
@@ -38,7 +37,9 @@ compatible with version 3.5 of the LizardTech DjVu software suite.
 
 %prep
 %setup
-%patch0 -p1 -b .extraqualif
+# In 3.5.15cvs, hardcoded "/usr/include/qt3" needs replacing
+. /etc/profile.d/qt.sh
+%{__perl} -pi -e "s|/usr/include/qt3|${QTINC}|g" gui/djview/Makefile.dep
 
 
 %build
@@ -97,13 +98,19 @@ update-desktop-database /usr/share/applications || :
 #files devel
 #defattr(-, root, root, 0755)
 %{_includedir}/libdjvu/
+%{_libdir}/pkgconfig/ddjvuapi.pc
 %exclude %{_libdir}/*.la
 %{_libdir}/*.so
 
 
 %changelog
+* Tue Mar 14 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-3
+- Update to CVS snapshot, fixes the build with gcc 4.1 (sf.net #1420522).
+- Include workaround for wrong qt3 includes in gui/djview/Makefile.dep.
+- Add new pkgconfig ddjvuapi.pc file.
+
 * Mon Mar  6 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-2
-- FC5 rebuild.
+- FC5 rebuild... nope.
 
 * Mon Jan 30 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-1
 - Update to 3.5.16.
