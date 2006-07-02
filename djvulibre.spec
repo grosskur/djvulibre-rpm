@@ -1,11 +1,11 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
-Version: 3.5.16
-Release: 3%{?dist}
+Version: 3.5.17
+Release: 1%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
-Source: http://dl.sf.net/djvu/djvulibre-%{version}cvs.tar.gz
+Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
 BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
@@ -104,8 +104,11 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Sun Jul  2 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-1
+- Update to 3.5.17.
+
 * Tue Mar 14 2006 Matthias Saou <http://freshrpms.net/> 3.5.16-3
-- Update to CVS snapshot, fixes the build with gcc 4.1 (sf.net #1420522).
+- Update to CVS snapshot, fixes the build with gcc 4.1 (sf.net #1420522).. NOT!
 - Include workaround for wrong qt3 includes in gui/djview/Makefile.dep.
 - Add new pkgconfig ddjvuapi.pc file.
 
