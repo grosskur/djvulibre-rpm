@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders and utilities
 Name: djvulibre
 Version: 3.5.17
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvulibre.djvuzone.org/
@@ -10,7 +10,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
 BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
 # Use monolithic X up to FC4, and modular X for FC5+ and non-Fedora
-%if %{!?fedora:5}%{?fedora} >= 5
+%if %{!?fedora:6}%{?fedora} >= 5
 BuildRequires: libXt-devel
 %else
 BuildRequires: xorg-x11-devel
@@ -104,6 +104,9 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Mon Aug 28 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-2
+- FC6 rebuild.
+
 * Sun Jul  2 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-1
 - Update to 3.5.17.
 
