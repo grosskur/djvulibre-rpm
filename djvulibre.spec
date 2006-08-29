@@ -8,12 +8,21 @@ URL: http://djvulibre.djvuzone.org/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
-BuildRequires: mozilla, redhat-menus, hicolor-icon-theme
+# These packages provide directories checked at configure time :
+BuildRequires: redhat-menus, hicolor-icon-theme
+# /usr/share/application-registry & /usr/share/mime-info :
+BuildRequires: gnome-mime-data
 # Use monolithic X up to FC4, and modular X for FC5+ and non-Fedora
 %if %{!?fedora:6}%{?fedora} >= 5
 BuildRequires: libXt-devel
 %else
 BuildRequires: xorg-x11-devel
+%endif
+# Use mozilla up to FC5, and seamonkey for FC6+ and non-Fedora
+%if %{!?fedora:6}%{?fedora} >= 6
+BuildRequires: seamonkey
+%else
+BuildRequires: mozilla
 %endif
 # Provide these here, they're so small, it's not worth splitting them out
 Provides: mozilla-djvulibre = %{version}-%{release}
@@ -106,6 +115,8 @@ update-desktop-database /usr/share/applications || :
 %changelog
 * Mon Aug 28 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-2
 - FC6 rebuild.
+- Use mozilla up to FC5, and seamonkey for FC6+ and non-Fedora.
+- Build require gnome-mime-data to get build time detected dirs in place.
 
 * Sun Jul  2 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-1
 - Update to 3.5.17.
