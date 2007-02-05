@@ -1,77 +1,62 @@
-Summary: DjVu viewers, encoders and utilities
+Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
-Version: 3.5.17
-Release: 2%{?dist}
+Version: 3.5.18
+Release: 1%{?dist}
 License: GPL
 Group: Applications/Publishing
-URL: http://djvulibre.djvuzone.org/
+URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+Requires(post): xdg-utils, /sbin/ldconfig
+Requires(preun): xdg-utils
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
-# These packages provide directories checked at configure time :
-BuildRequires: redhat-menus, hicolor-icon-theme
-# /usr/share/application-registry & /usr/share/mime-info :
-BuildRequires: gnome-mime-data
-# Use monolithic X up to FC4, and modular X for FC5+ and non-Fedora
-%if %{!?fedora:6}%{?fedora} >= 5
-BuildRequires: libXt-devel
-%else
-BuildRequires: xorg-x11-devel
-%endif
-# Use mozilla up to FC5, and seamonkey for FC6+ and non-Fedora
-%if %{!?fedora:6}%{?fedora} >= 6
-BuildRequires: seamonkey
-%else
-BuildRequires: mozilla
-%endif
-# Provide these here, they're so small, it's not worth splitting them out
+BuildRequires: xdg-utils
+# Virtual provides... might be worth splitting out for multilib, but then we'd
+# probably need a separate -libs package to have 64bit tools and 32bit plugin
 Provides: mozilla-djvulibre = %{version}-%{release}
-Provides: djvulibre-devel = %{version}-%{release}
 
 %description
 DjVu is a web-centric format and software platform for distributing documents
-and images.  DjVu content downloads faster, displays and renders faster, looks
-nicer on a screen, and consume less client resources than competing formats.
-DjVu was originally developed at AT&T Labs-Research by Leon Bottou, Yann
-LeCun, Patrick Haffner, and many others.  In March 2000, AT&T sold DjVu to
-LizardTech Inc. who now distributes Windows/Mac plug-ins, and commercial
-encoders (mostly on Windows)
+and images. DjVu can advantageously replace PDF, PS, TIFF, JPEG, and GIF for
+distributing scanned documents, digital documents, or high-resolution pictures.
+DjVu content downloads faster, displays and renders faster, looks nicer on a
+screen, and consume less client resources than competing formats. DjVu images
+display instantly and can be smoothly zoomed and panned with no lengthy
+re-rendering.
 
-In an effort to promote DjVu as a Web standard, the LizardTech management was
-enlightened enough to release the reference implementation of DjVu under the
-GNU GPL in October 2000.  DjVuLibre (which means free DjVu), is an enhanced
-version of that code maintained by the original inventors of DjVu. It is
-compatible with version 3.5 of the LizardTech DjVu software suite.
+DjVuLibre is a free (GPL'ed) implementation of DjVu, including viewers, browser
+plugins, decoders, simple encoders, and utilities.
+
+
+%package devel
+Summary: Development files for djvulibre
+Group: Development/Libraries
+Requires: %{name} = %{version}-%{release}, pkgconfig
+
+%description devel
+Development files for djvulibre.
 
 
 %prep
 %setup
-# In 3.5.15cvs, hardcoded "/usr/include/qt3" needs replacing
-. /etc/profile.d/qt.sh
-%{__perl} -pi -e "s|/usr/include/qt3|${QTINC}|g" gui/djview/Makefile.dep
 
 
 %build
 %configure
-# In 3.5.14 %{?_smp_mflags} broke the build
+# In 3.5.14 %{?_smp_mflags} broke the build - still in 3.5.18
 %{__make} OPTS="%{optflags}"
 
 
 %install
 %{__rm} -rf %{buildroot}
-%makeinstall
+%{__make} install DESTDIR=%{buildroot}
 # Move plugin from the netscape directory to the main mozilla one
 %{__mkdir_p} %{buildroot}%{_libdir}/mozilla/plugins/
 %{__mv} %{buildroot}%{_libdir}/netscape/plugins/nsdejavu.so \
         %{buildroot}%{_libdir}/mozilla/plugins/nsdejavu.so
 
-# Fix for the libs to get stripped correctly (still required in 3.5.15)
+# Fix for the libs to get stripped correctly (still required in 3.5.18)
 find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
-
-# Move menu entry pixmap to new location
-%{__mkdir_p} %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/
-%{__mv} %{buildroot}%{_datadir}/pixmaps/djvu.png \
-        %{buildroot}%{_datadir}/icons/hicolor/48x48/apps/djvu.png
 
 
 %clean
@@ -80,13 +65,21 @@ find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
 
 %post
 /sbin/ldconfig
-gtk-update-icon-cache -q -f %{_datadir}/icons/hicolor || :
-update-desktop-database /usr/share/applications || :
+# Menu entry (icons and desktop file)
+%{_datadir}/djvu/djview3/desktop/register-djview-menu install || :
+# MIME types (icons and desktop file)
+%{_datadir}/djvu/osi/desktop/register-djvu-mime install || :
 
-%postun
-/sbin/ldconfig
-gtk-update-icon-cache -q -f %{_datadir}/icons/hicolor || :
-update-desktop-database /usr/share/applications || :
+%preun
+# Removal, not update
+if [ $1 -eq 0 ]; then
+    # Menu entry (icons and desktop file)
+    %{_datadir}/djvu/djview3/desktop/register-djview-menu uninstall || :
+    # MIME types (icons and desktop file)
+    %{_datadir}/djvu/osi/desktop/register-djvu-mime uninstall || :
+fi
+
+%postun -p /sbin/ldconfig
 
 
 %files
@@ -95,17 +88,14 @@ update-desktop-database /usr/share/applications || :
 %{_bindir}/*
 %{_libdir}/*.so.*
 %{_libdir}/mozilla/plugins/nsdejavu.so
-%{_datadir}/application-registry/djvu.applications
-%{_datadir}/applications/djview.desktop
-%{_datadir}/icons/hicolor/??x??/apps/djvu.png
-%{_datadir}/icons/hicolor/??x??/mimetypes/djvu.png
 %{_datadir}/djvu/
-%{_datadir}/mime-info/djvu.*
 %{_mandir}/man1/*
+#lang(de) %{_mandir}/de/man1/*
+#lang(fr) %{_mandir}/fr/man1/*
 %lang(ja) %{_mandir}/ja/man1/*
 
-#files devel
-#defattr(-, root, root, 0755)
+%files devel
+%defattr(-, root, root, 0755)
 %{_includedir}/libdjvu/
 %{_libdir}/pkgconfig/ddjvuapi.pc
 %exclude %{_libdir}/*.la
@@ -113,6 +103,14 @@ update-desktop-database /usr/share/applications || :
 
 
 %changelog
+* Mon Feb  5 2007 Matthias Saou <http://freshrpms.net/> 3.5.18-1
+- Update to 3.5.18.
+- Remove no longer needed /usr/include/qt3 replacing.
+- Replace desktop build requirements and scriplets with new xdg utils way.
+- Include new de and fr man page translations... not! Directories are empty.
+- Split -devel sub-package, as the new djview4 should build require it.
+- No longer build require a web browser, the plugin always gets built now.
+
 * Mon Aug 28 2006 Matthias Saou <http://freshrpms.net/> 3.5.17-2
 - FC6 rebuild.
 - Use mozilla up to FC5, and seamonkey for FC6+ and non-Fedora.
