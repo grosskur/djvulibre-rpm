@@ -1,18 +1,17 @@
 Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
-Version: 3.5.18
+Version: 3.5.19
 Release: 1%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+Patch0: djvulibre-3.5.18-plugin-manpage.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
 BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
 BuildRequires: xdg-utils
-# Virtual provides... might be worth splitting out for multilib, but then we'd
-# probably need a separate -libs package to have 64bit tools and 32bit plugin
 Provides: mozilla-djvulibre = %{version}-%{release}
 
 %description
@@ -38,11 +37,22 @@ Development files for djvulibre.
 
 
 %prep
-%setup
+%setup -q
+%patch0 -p1 -b .plugin-manpage
+# Remove leftover file (since we include the dir as %%doc)
+%{__rm} -f doc/minilisp/.cvsignore
+# Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.19)
+for manpage in i18n/ja/*.1*; do
+    iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
+    mv tmp ${manpage}
+done
 
 
 %build
 %configure
+# Disable rpath on 64bit - NOT! It makes the build fail (3.5.19)
+#sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
+#sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 # In 3.5.14 %{?_smp_mflags} broke the build - still in 3.5.18
 %{__make} OPTS="%{optflags}"
 
@@ -83,7 +93,7 @@ fi
 
 
 %files
-%defattr(-, root, root, 0755)
+%defattr(-,root,root,-)
 %doc README COPYRIGHT COPYING NEWS TODO doc/
 %{_bindir}/*
 %{_libdir}/*.so.*
@@ -95,7 +105,7 @@ fi
 %lang(ja) %{_mandir}/ja/man1/*
 
 %files devel
-%defattr(-, root, root, 0755)
+%defattr(-,root,root,-)
 %{_includedir}/libdjvu/
 %{_libdir}/pkgconfig/ddjvuapi.pc
 %exclude %{_libdir}/*.la
@@ -103,6 +113,14 @@ fi
 
 
 %changelog
+* Fri Jun  8 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-1
+- Update to 3.5.19.
+- Disable rpath on 64bit... not.
+- Convert ja man pages to UTF-8.
+
+* Tue Feb 13 2007 Matthias Saou <http://freshrpms.net/> 3.5.18-2
+- Include man page patch to have man pages be identical across archs (#228359).
+
 * Mon Feb  5 2007 Matthias Saou <http://freshrpms.net/> 3.5.18-1
 - Update to 3.5.18.
 - Remove no longer needed /usr/include/qt3 replacing.
@@ -176,7 +194,7 @@ fi
 - Added new Japanese man pages.
 
 * Wed May  5 2004 Matthias Saou <http://freshrpms.net/> 3.5.12-4
-- Changed the plugin directory for mozilla to %{_libdir}/mozilla,
+- Changed the plugin directory for mozilla to %%{_libdir}/mozilla,
   as suggested by Matteo Corti.
 - Shortened the description.
 
