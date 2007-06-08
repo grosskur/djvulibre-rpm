@@ -1,0 +1,162 @@
+diff -Nupr djvulibre-3.5.18.orig/gui/nsdejavu/nsdejavu.1.in djvulibre-3.5.18/gui/nsdejavu/nsdejavu.1.in
+--- djvulibre-3.5.18.orig/gui/nsdejavu/nsdejavu.1.in	2007-01-21 16:36:24.000000000 +0100
++++ djvulibre-3.5.18/gui/nsdejavu/nsdejavu.1.in	2007-02-13 13:46:34.000000000 +0100
+@@ -29,7 +29,10 @@
+ nsdejavu \- DjVu browser plugin
+ 
+ .SH SYNOPSIS
+-.B LIBDIR/netscape/plugins/NSDEJAVUSO
++.B /usr/lib/mozilla/plugins/NSDEJAVUSO
++or
++.br
++.B /usr/lib64/mozilla/plugins/NSDEJAVUSO
+ 
+ .SH DESCRIPTION
+ The shared library
+@@ -205,48 +208,31 @@ tag:
+ .SH BROWSER COMPATIBILITY
+ The DjVu browser plugin has been tested with
+ several popular web browsers:
+-.SS NETSCAPE 4
++.SS MOZILLA
++.PP
++The DjVuLibre plugin works nicely with Mozilla 0.9.5 or better.
+ .PP
+-The DjVu browser plugin is normally installed in directory
+-.BR /usr/local/lib/netscape/plugins .
+-This is sufficient to enable the DjVu browser plugin
+-because Netscape 4 always searches this directory for
+-plugins.
+-You might have to first remove previous version of the DjVuLibre plugin.
+-Selecting menu
++Start
++.B mozilla
++and select menu
+ .B "Help->About Plugins"
+-in
+-.B netscape
+-displays the current list of plugins.
+-Previous versions of the plugin might be installed in one of
+-the following locations:
+-.IP "" 2
+-.B "$HOME/.netscape/plugins/nsdejavu.so"
+-.br
+-.B "/usr/lib/netscape/plugins/nsdejavu.so"
+-.br
+-.B "/opt/netscape/plugins/nsdejavu.so"
++to check whether the DjVuLibre plugin is properly recognized.
+ .PP
+-More complicated cases can be solved by creating a symbolic
+-link into your personal plugin directory:
+-.IP "" 2
+-.B "cd $HOME/.netscape/plugins"
+-.br
+-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
++.SS FIREFOX
++.PP
++The DjVuLibre plugin works nicely with Firefox or better.
+ .PP
+-You must not copy
+-.B nsdejavu.so
+-but create a symbolic link.  This is necessary
+-because
+-.B nsdejavu.so
+-first locates its normal installation directory by following the symbolic
+-link.  The Netscape plugin search rules are explained in the
+-.B README
+-file that comes with the Netscape distribution.
+-Also check option
+-.B -fix
+-of program
+-.BR djview3 .
++Start
++.B firefox
++and enter the address
++.B "about:plugins"
++to check whether the DjVuLibre plugin is properly recognized.
++.PP
++.SS GALEON
++.PP
++Galeon internally uses the Mozilla rendering engine.
++If the plugin works for Mozilla, it should also
++work for Galeon.
+ .PP
+ .SS NETSCAPE 6
+ .PP
+@@ -257,43 +243,13 @@ Let us assume that Netscape 6 is install
+ .IR /usr/local/netscape6 .
+ The following commands should do the trick:
+ .IP "" 2
+-.BI "cd " "/usr/local/netscape6" "/plugins"
++.BI "cd " "/usr/local/netscape6/plugins"
+ .br
+-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
+-.PP
+-.SS MOZILLA
+-.PP
+-The DjVuLibre plugin works nicely with Mozilla 0.9.5 or better.
+-You must establish a link from the Mozilla plugin directory.
+-Assuming that Mozilla is installed under
+-.IR /usr/lib/mozilla-1.1 :
+-.IP "" 2
+-.BI "cd " "/usr/lib/mozilla-1.1" "/plugins"
+-.br
+-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
+-.PP
+-You can then restart
+-.B mozilla
+-and select menu
+-.B "Help->About Plugins" to check
+-whether the DjVuLibre plugin is properly recognized.
+-.PP
+-.SS GALEON
+-.PP
+-Galeon internally uses the Mozilla rendering engine.
+-Install the plugin for Mozilla and it should also
+-work for Galeon.
+-.PP
+-.SS FIREFOX
+-.PP
+-The DjVuLibre plugin works nicely with Firefox or better.
+-You must establish a link from the Firefox plugin directory.
+-Assuming that Firefox is installed under
+-.IR /usr/lib/mozilla-firefox :
+-.IP "" 2
+-.BI "cd " "/usr/lib/mozilla-firefox" "/plugins"
++.B "ln -s /usr/lib/mozilla/plugins/nsdejavu.so ."
+ .br
+-.B "ln -s /usr/lib/netscape/plugins/nsdejavu.so ."
++( or
++.B "ln -s /usr/lib64/mozilla/plugins/nsdejavu.so ."
++)
+ .PP
+ .SS KONQUEROR
+ .PP
+@@ -308,8 +264,10 @@ In Konqueror, select
+ When the dialog appears, select the icon
+ .BR "Netscape Plugins" .
+ Make sure that directory
+-.B "/usr/lib/netscape/plugins"
+-appears in the list of plugin directories.
++.B "/usr/lib/mozilla/plugins"
++(or
++.B "/usr/lib64/mozilla/plugins"
++) appears in the list of plugin directories.
+ Then press button
+ .BR "Scan for new plugins" .
+ Clicking the
+diff -Nupr djvulibre-3.5.18.orig/i18n/ja/nsdejavu.1.in djvulibre-3.5.18/i18n/ja/nsdejavu.1.in
+--- djvulibre-3.5.18.orig/i18n/ja/nsdejavu.1.in	2003-11-18 16:01:57.000000000 +0100
++++ djvulibre-3.5.18/i18n/ja/nsdejavu.1.in	2007-02-13 13:32:26.000000000 +0100
+@@ -27,7 +27,10 @@
+ nsdejavu \- DjVu ブラウザプラグイン
+ 
+ .SH 書式
+-.B LIBDIR/netscape/plugins/NSDEJAVUSO
++.B /usr/lib/mozilla/plugins/NSDEJAVUSO
++.br
++or
++.B /usr/lib64/mozilla/plugins/NSDEJAVUSO
+ 
+ .SH 説明
+ 共有ライブラリ
