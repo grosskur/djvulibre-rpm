@@ -1,12 +1,13 @@
 Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
 Version: 3.5.19
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPL
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 Patch0: djvulibre-3.5.18-plugin-manpage.patch
+Patch1: djvulibre-3.5.19-ja-encoding.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
@@ -39,6 +40,7 @@ Development files for djvulibre.
 %prep
 %setup -q
 %patch0 -p1 -b .plugin-manpage
+%patch1 -p1 -b .ja-encoding
 # Remove leftover file (since we include the dir as %%doc)
 %{__rm} -f doc/minilisp/.cvsignore
 # Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.19)
@@ -113,6 +115,9 @@ fi
 
 
 %changelog
+* Mon Jun 11 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-2
+- Include patch to remove LC_CTYPE for ja man pages, fixes sed 100% CPU issue.
+
 * Fri Jun  8 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-1
 - Update to 3.5.19.
 - Disable rpath on 64bit... not.
