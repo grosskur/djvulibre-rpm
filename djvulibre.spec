@@ -1,8 +1,8 @@
 Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
 Version: 3.5.19
-Release: 2%{?dist}
-License: GPL
+Release: 3%{?dist}
+License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
@@ -115,6 +115,9 @@ fi
 
 
 %changelog
+* Mon Aug  6 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-3
+- Update License field.
+
 * Mon Jun 11 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-2
 - Include patch to remove LC_CTYPE for ja man pages, fixes sed 100% CPU issue.
 
