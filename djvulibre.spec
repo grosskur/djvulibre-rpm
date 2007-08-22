@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
 Version: 3.5.19
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -115,6 +115,9 @@ fi
 
 
 %changelog
+* Wed Aug 22 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-4
+- Rebuild for new BuildID feature.
+
 * Mon Aug  6 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-3
 - Update License field.
 
