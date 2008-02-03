@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.20
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -142,7 +142,7 @@ fi
 
 
 %changelog
-* Sun Feb  3 2008 Matthias Saou <http://freshrpms.net/> 3.5.20-1
+* Sun Feb  3 2008 Matthias Saou <http://freshrpms.net/> 3.5.20-2
 - Update to 3.5.20-2 (#431025).
 - Split off a -libs sub-package (#391201).
 - Split off a -mozplugin sub-package.
