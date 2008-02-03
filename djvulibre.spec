@@ -1,19 +1,20 @@
 Summary: DjVu viewers, encoders, utilities and web browser plugin
 Name: djvulibre
-Version: 3.5.19
-Release: 4%{?dist}
+Version: 3.5.20
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
-Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+Source: http://dl.sf.net/djvu/djvulibre-%{version}-2.tar.gz
 Patch0: djvulibre-3.5.18-plugin-manpage.patch
 Patch1: djvulibre-3.5.19-ja-encoding.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
-BuildRequires: qt-devel, libjpeg-devel, libtiff-devel
+BuildRequires: libjpeg-devel
+BuildRequires: libtiff-devel
+BuildRequires: qt-devel
 BuildRequires: xdg-utils
-Provides: mozilla-djvulibre = %{version}-%{release}
 
 %description
 DjVu is a web-centric format and software platform for distributing documents
@@ -28,22 +29,40 @@ DjVuLibre is a free (GPL'ed) implementation of DjVu, including viewers, browser
 plugins, decoders, simple encoders, and utilities.
 
 
+%package libs
+Summary: Library files for DjVuLibre
+Group: System Environment/Libraries
+
+%description libs
+Library files for DjVuLibre.
+
+
+%package mozplugin
+Summary: Mozilla plugin for DjVuLibre
+Group: Applications/Internet
+Provides: mozilla-djvulibre = %{version}-%{release}
+# The plugin isn't library based, it seems to fork the viewer application
+Requires: %{name} = %{version}-%{release}
+
+%description mozplugin
+Mozilla plugin for DjVuLibre.
+
+
 %package devel
-Summary: Development files for djvulibre
+Summary: Development files for DjVuLibre
 Group: Development/Libraries
-Requires: %{name} = %{version}-%{release}, pkgconfig
+Requires: %{name}-libs = %{version}-%{release}
+Requires: pkgconfig
 
 %description devel
-Development files for djvulibre.
+Development files for DjVuLibre.
 
 
 %prep
 %setup -q
 %patch0 -p1 -b .plugin-manpage
 %patch1 -p1 -b .ja-encoding
-# Remove leftover file (since we include the dir as %%doc)
-%{__rm} -f doc/minilisp/.cvsignore
-# Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.19)
+# Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.20-2)
 for manpage in i18n/ja/*.1*; do
     iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
     mv tmp ${manpage}
@@ -52,10 +71,10 @@ done
 
 %build
 %configure
-# Disable rpath on 64bit - NOT! It makes the build fail (3.5.19)
+# Disable rpath on 64bit - NOT! It makes the build fail (still as of 3.5.20-2)
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 #sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
-# In 3.5.14 %{?_smp_mflags} broke the build - still in 3.5.18
+# In 3.5.14 %{?_smp_mflags} broke the build - still in 3.5.20-2
 %{__make} OPTS="%{optflags}"
 
 
@@ -67,7 +86,7 @@ done
 %{__mv} %{buildroot}%{_libdir}/netscape/plugins/nsdejavu.so \
         %{buildroot}%{_libdir}/mozilla/plugins/nsdejavu.so
 
-# Fix for the libs to get stripped correctly (still required in 3.5.18)
+# Fix for the libs to get stripped correctly (still required in 3.5.20-2)
 find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
 
 
@@ -76,7 +95,6 @@ find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
 
 
 %post
-/sbin/ldconfig
 # Menu entry (icons and desktop file)
 %{_datadir}/djvu/djview3/desktop/register-djview-menu install || :
 # MIME types (icons and desktop file)
@@ -91,23 +109,31 @@ if [ $1 -eq 0 ]; then
     %{_datadir}/djvu/osi/desktop/register-djvu-mime uninstall || :
 fi
 
-%postun -p /sbin/ldconfig
+
+%post libs -p /sbin/ldconfig
+
+%postun libs -p /sbin/ldconfig
 
 
 %files
 %defattr(-,root,root,-)
-%doc README COPYRIGHT COPYING NEWS TODO doc/
 %{_bindir}/*
-%{_libdir}/*.so.*
-%{_libdir}/mozilla/plugins/nsdejavu.so
 %{_datadir}/djvu/
 %{_mandir}/man1/*
-#lang(de) %{_mandir}/de/man1/*
-#lang(fr) %{_mandir}/fr/man1/*
 %lang(ja) %{_mandir}/ja/man1/*
+
+%files libs
+%defattr(-,root,root,-)
+%doc README COPYRIGHT COPYING NEWS TODO
+%{_libdir}/*.so.*
+
+%files mozplugin
+%defattr(-,root,root,-)
+%{_libdir}/mozilla/plugins/nsdejavu.so
 
 %files devel
 %defattr(-,root,root,-)
+%doc doc/*.*
 %{_includedir}/libdjvu/
 %{_libdir}/pkgconfig/ddjvuapi.pc
 %exclude %{_libdir}/*.la
@@ -115,6 +141,11 @@ fi
 
 
 %changelog
+* Sun Feb  3 2008 Matthias Saou <http://freshrpms.net/> 3.5.20-1
+- Update to 3.5.20-2 (#431025).
+- Split off a -libs sub-package (#391201).
+- Split off a -mozplugin sub-package.
+
 * Wed Aug 22 2007 Matthias Saou <http://freshrpms.net/> 3.5.19-4
 - Rebuild for new BuildID feature.
 
