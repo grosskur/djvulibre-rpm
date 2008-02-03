@@ -1,4 +1,4 @@
-Summary: DjVu viewers, encoders, utilities and web browser plugin
+Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.20
 Release: 1%{?dist}
@@ -25,8 +25,9 @@ screen, and consume less client resources than competing formats. DjVu images
 display instantly and can be smoothly zoomed and panned with no lengthy
 re-rendering.
 
-DjVuLibre is a free (GPL'ed) implementation of DjVu, including viewers, browser
-plugins, decoders, simple encoders, and utilities.
+DjVuLibre is a free (GPL'ed) implementation of DjVu, including viewers,
+decoders, simple encoders, and utilities. The browser plugin is in its own
+separate sub-package.
 
 
 %package libs
