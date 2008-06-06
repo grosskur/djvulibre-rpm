@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.20
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -13,7 +13,7 @@ Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
 BuildRequires: libjpeg-devel
 BuildRequires: libtiff-devel
-BuildRequires: qt-devel
+BuildRequires: qt3-devel
 BuildRequires: xdg-utils
 
 %description
@@ -142,6 +142,9 @@ fi
 
 
 %changelog
+* Fri Jun 06 2008 Dennis Gilmore <dennis@ausil.us> 3.5.20-3
+- BR qt3-devel
+
 * Sun Feb  3 2008 Matthias Saou <http://freshrpms.net/> 3.5.20-2
 - Update to 3.5.20-2 (#431025).
 - Split off a -libs sub-package (#391201).
