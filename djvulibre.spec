@@ -1,13 +1,14 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
-Version: 3.5.20
-Release: 3%{?dist}
+Version: 3.5.21
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
-Source: http://dl.sf.net/djvu/djvulibre-%{version}-2.tar.gz
+Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 Patch0: djvulibre-3.5.18-plugin-manpage.patch
 Patch1: djvulibre-3.5.19-ja-encoding.patch
+Patch2: djvulibre-configure.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
@@ -63,6 +64,7 @@ Development files for DjVuLibre.
 %setup -q
 %patch0 -p1 -b .plugin-manpage
 %patch1 -p1 -b .ja-encoding
+%patch2 -p1 -b .configure
 # Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.20-2)
 for manpage in i18n/ja/*.1*; do
     iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
@@ -142,6 +144,9 @@ fi
 
 
 %changelog
+* Sat Jan 17 2009 Rakesh Pandit <rakesh@fedoraproject.org> 3.5.21-1
+- Updated to 3.5.21
+
 * Fri Jun 06 2008 Dennis Gilmore <dennis@ausil.us> 3.5.20-3
 - BR qt3-devel
 
