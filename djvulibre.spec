@@ -1,21 +1,18 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
-Version: 3.5.21
-Release: 3%{?dist}
+Version: 3.5.22
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
-Patch0: djvulibre-3.5.18-plugin-manpage.patch
-Patch1: djvulibre-3.5.19-ja-encoding.patch
-Patch2: djvulibre-configure.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
 BuildRequires: libjpeg-devel
 BuildRequires: libtiff-devel
 BuildRequires: qt3-devel
-BuildRequires: xdg-utils
+BuildRequires: xdg-utils, chrpath
 
 %description
 DjVu is a web-centric format and software platform for distributing documents
@@ -62,18 +59,16 @@ Development files for DjVuLibre.
 
 %prep
 %setup -q
-%patch0 -p1 -b .plugin-manpage
-%patch1 -p1 -b .ja-encoding
-%patch2 -p1 -b .configure
+
 # Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.20-2)
-for manpage in i18n/ja/*.1*; do
-    iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
-    mv tmp ${manpage}
-done
+#for manpage in i18n/ja/*.1*; do
+#    iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
+#    mv tmp ${manpage}
+#done
 
 
 %build
-%configure
+%configure --with-qt=%{_libdir}/qt-3.3 --enable-threads
 # Disable rpath on 64bit - NOT! It makes the build fail (still as of 3.5.20-2)
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 #sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
@@ -91,6 +86,26 @@ done
 
 # Fix for the libs to get stripped correctly (still required in 3.5.20-2)
 find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
+
+# Remove rpath
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvutoxml
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvused
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/cjb2
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/csepdjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuserve
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvm
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuxmlparser
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvutxt
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/ddjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvumake
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/cpaldjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuextract
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/c44
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvups
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djview3
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvudump
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvmcvt
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/bzz
 
 
 %clean
@@ -144,6 +159,9 @@ fi
 
 
 %changelog
+* Mon Nov 30 2009 Ralesh Pandit  <rakesh@fedoraproject.org> 3.5.22-1
+- Updated to 3.5.22 (#542221) (Spec patch by Michal Schmidt)
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.21-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
