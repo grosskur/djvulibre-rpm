@@ -1,11 +1,12 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.22
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+Patch0: djvulibre-3.5.22-cdefs.patch
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(post): xdg-utils, /sbin/ldconfig
 Requires(preun): xdg-utils
@@ -59,6 +60,7 @@ Development files for DjVuLibre.
 
 %prep
 %setup -q
+%patch0 -p1 -b .cdefs
 
 # Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.20-2)
 #for manpage in i18n/ja/*.1*; do
@@ -159,6 +161,9 @@ fi
 
 
 %changelog
+* Mon Jan 31 2011 Karsten Hopp <karsten@redhat.com> 3.5.22-2
+- add include cstddefs for size_t
+
 * Mon Nov 30 2009 Ralesh Pandit  <rakesh@fedoraproject.org> 3.5.22-1
 - Updated to 3.5.22 (#542221) (Spec patch by Michal Schmidt)
 
