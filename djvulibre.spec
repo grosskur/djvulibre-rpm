@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.24
-Release: 2%{?dist}
+Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -91,16 +91,12 @@ chrpath --delete $RPM_BUILD_ROOT%{_bindir}/bzz
 
 
 %post
-# Menu entry (icons and desktop file)
-%{_datadir}/djvu/djview3/desktop/register-djview-menu install || :
 # MIME types (icons and desktop file)
 %{_datadir}/djvu/osi/desktop/register-djvu-mime install || :
 
 %preun
 # Removal, not update
 if [ $1 -eq 0 ]; then
-    # Menu entry (icons and desktop file)
-    %{_datadir}/djvu/djview3/desktop/register-djview-menu uninstall || :
     # MIME types (icons and desktop file)
     %{_datadir}/djvu/osi/desktop/register-djvu-mime uninstall || :
 fi
@@ -133,6 +129,9 @@ fi
 
 
 %changelog
+* Fri Feb 17 2012 Orion Poplawski <orion@cora.nwra.com> - 3.5.24-3
+- Don't call register-djview-menu since we don't build djview3 anymore (bug 734856)
+
 * Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.24-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
 
