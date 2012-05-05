@@ -1,21 +1,21 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
-Version: 3.5.21
+Version: 3.5.24
 Release: 3%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
-Patch0: djvulibre-3.5.18-plugin-manpage.patch
-Patch1: djvulibre-3.5.19-ja-encoding.patch
-Patch2: djvulibre-configure.patch
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Requires(post): xdg-utils, /sbin/ldconfig
+Patch0: djvulibre-3.5.22-cdefs.patch
+
+Requires(post): xdg-utils
 Requires(preun): xdg-utils
-BuildRequires: libjpeg-devel
+BuildRequires: libjpeg-turbo-devel
 BuildRequires: libtiff-devel
-BuildRequires: qt3-devel
-BuildRequires: xdg-utils
+BuildRequires: xdg-utils chrpath
+
+Provides: %{name}-mozplugin = %{version}
+Obsoletes: %{name}-mozplugin < 3.5.24
 
 %description
 DjVu is a web-centric format and software platform for distributing documents
@@ -39,17 +39,6 @@ Group: System Environment/Libraries
 Library files for DjVuLibre.
 
 
-%package mozplugin
-Summary: Mozilla plugin for DjVuLibre
-Group: Applications/Internet
-Provides: mozilla-djvulibre = %{version}-%{release}
-# The plugin isn't library based, it seems to fork the viewer application
-Requires: %{name} = %{version}-%{release}
-
-%description mozplugin
-Mozilla plugin for DjVuLibre.
-
-
 %package devel
 Summary: Development files for DjVuLibre
 Group: Development/Libraries
@@ -62,52 +51,52 @@ Development files for DjVuLibre.
 
 %prep
 %setup -q
-%patch0 -p1 -b .plugin-manpage
-%patch1 -p1 -b .ja-encoding
-%patch2 -p1 -b .configure
-# Convert ISO8859-1 ja man pages to UTF-8 (still as of 3.5.20-2)
-for manpage in i18n/ja/*.1*; do
-    iconv -f iso8859-1 -t utf-8 -o tmp ${manpage}
-    mv tmp ${manpage}
-done
+%patch0 -p1 -b .cdefs
 
 
-%build
-%configure
+%build 
+%configure --with-qt=%{_libdir}/qt-3.3 --enable-threads
 # Disable rpath on 64bit - NOT! It makes the build fail (still as of 3.5.20-2)
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 #sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
-# In 3.5.14 %{?_smp_mflags} broke the build - still in 3.5.20-2
-%{__make} OPTS="%{optflags}"
+
+#%{__make} OPTS="%{optflags}"
+make %{?_smp_mflags} V=1
 
 
 %install
-%{__rm} -rf %{buildroot}
-%{__make} install DESTDIR=%{buildroot}
-# Move plugin from the netscape directory to the main mozilla one
-%{__mkdir_p} %{buildroot}%{_libdir}/mozilla/plugins/
-%{__mv} %{buildroot}%{_libdir}/netscape/plugins/nsdejavu.so \
-        %{buildroot}%{_libdir}/mozilla/plugins/nsdejavu.so
+make install DESTDIR=%{buildroot}
 
 # Fix for the libs to get stripped correctly (still required in 3.5.20-2)
 find %{buildroot}%{_libdir} -name '*.so*' | xargs %{__chmod} +x
 
-
-%clean
-%{__rm} -rf %{buildroot}
+# Remove rpath
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvutoxml
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvused
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/cjb2
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/csepdjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuserve
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvm
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuxmlparser
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvutxt
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/ddjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvumake
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/cpaldjvu
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvuextract
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/c44
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvups
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvudump
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvmcvt
+chrpath --delete $RPM_BUILD_ROOT%{_bindir}/bzz
 
 
 %post
-# Menu entry (icons and desktop file)
-%{_datadir}/djvu/djview3/desktop/register-djview-menu install || :
 # MIME types (icons and desktop file)
 %{_datadir}/djvu/osi/desktop/register-djvu-mime install || :
 
 %preun
 # Removal, not update
 if [ $1 -eq 0 ]; then
-    # Menu entry (icons and desktop file)
-    %{_datadir}/djvu/djview3/desktop/register-djview-menu uninstall || :
     # MIME types (icons and desktop file)
     %{_datadir}/djvu/osi/desktop/register-djvu-mime uninstall || :
 fi
@@ -130,10 +119,6 @@ fi
 %doc README COPYRIGHT COPYING NEWS TODO
 %{_libdir}/*.so.*
 
-%files mozplugin
-%defattr(-,root,root,-)
-%{_libdir}/mozilla/plugins/nsdejavu.so
-
 %files devel
 %defattr(-,root,root,-)
 %doc doc/*.*
@@ -144,6 +129,23 @@ fi
 
 
 %changelog
+* Fri Feb 17 2012 Orion Poplawski <orion@cora.nwra.com> - 3.5.24-3
+- Don't call register-djview-menu since we don't build djview3 anymore (bug 734856)
+
+* Fri Jan 13 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.24-2
+- Rebuilt for https://fedoraproject.org/wiki/Fedora_17_Mass_Rebuild
+
+* Mon Aug  8 2011 Peter Robinson <pbrobinson@gmail.com> 3.5.24-1
+- 3.5.24
+- Obsolete mozplugin, dropped upstream
+- Dropped djview3, use djview4
+
+* Mon Jan 31 2011 Karsten Hopp <karsten@redhat.com> 3.5.22-2
+- add include cstddefs for size_t
+
+* Mon Nov 30 2009 Ralesh Pandit  <rakesh@fedoraproject.org> 3.5.22-1
+- Updated to 3.5.22 (#542221) (Spec patch by Michal Schmidt)
+
 * Fri Jul 24 2009 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.21-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_12_Mass_Rebuild
 
