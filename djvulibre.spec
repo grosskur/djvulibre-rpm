@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.24
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -10,7 +10,11 @@ Patch0: djvulibre-3.5.22-cdefs.patch
 
 Requires(post): xdg-utils
 Requires(preun): xdg-utils
+%if (0%{?fedora} > 15 || 0%{?rhel} > 6)
 BuildRequires: libjpeg-turbo-devel
+%else
+BuildRequires: libjpeg-devel
+%endif
 BuildRequires: libtiff-devel
 BuildRequires: xdg-utils chrpath
 
@@ -91,6 +95,10 @@ chrpath --delete $RPM_BUILD_ROOT%{_bindir}/bzz
 
 
 %post
+# Unregister menu entry for djview3 if it is present as we no longer
+# ship this in favour of the djview4 package
+%{_datadir}/djvu/djview3/desktop/register-djview-menu uninstall || :
+
 # MIME types (icons and desktop file)
 %{_datadir}/djvu/osi/desktop/register-djvu-mime install || :
 
@@ -129,6 +137,12 @@ fi
 
 
 %changelog
+* Sat May  5 2012 Jonathan G. Underwood <rpmb@mia.theory.phys.ucl.ac.uk> - 3.5.24-4
+- Merge in changes from Fedora master branch to el6 branch to bring version 3.5.24
+- Unregister djview3 menu/desktop entry on install if present
+- Replace BuildRequire for libjpeg-turbo-devel with libjpeg-devel
+  depending on fedora/rhel version
+
 * Fri Feb 17 2012 Orion Poplawski <orion@cora.nwra.com> - 3.5.24-3
 - Don't call register-djview-menu since we don't build djview3 anymore (bug 734856)
 
