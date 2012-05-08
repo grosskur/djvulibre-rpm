@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.24
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -17,6 +17,7 @@ BuildRequires: libjpeg-devel
 %endif
 BuildRequires: libtiff-devel
 BuildRequires: xdg-utils chrpath
+BuildRequires: hicolor-icon-theme
 
 Provides: %{name}-mozplugin = %{version}
 Obsoletes: %{name}-mozplugin < 3.5.24
@@ -93,22 +94,45 @@ chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvudump
 chrpath --delete $RPM_BUILD_ROOT%{_bindir}/djvmcvt
 chrpath --delete $RPM_BUILD_ROOT%{_bindir}/bzz
 
+# MIME types (icons and desktop file) - this installs icon files under
+# /usr/share/icons/hicolor/ and an xml file under /usr/share/mime/image/
+# Taken from {_datadir}/djvu/osi/desktop/register-djvu-mime install
+# See also the README file in the desktopfiles directory of the source distribution
+pushd desktopfiles
+for i in 22 32 48 64 ; do
+    install -d $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${i}x${i}/mimetypes/
+    cp -a ./hi${i}-djvu.png $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${i}x${i}/mimetypes/image-vnd.djvu.mime.png
+#    cp -a ./hi${i}-djvu.png $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${i}x${i}/mimetypes/gnome-mime-image-vnd.djvu.png
+done
+popd
 
 %post
 # Unregister menu entry for djview3 if it is present as we no longer
-# ship this in favour of the djview4 package
-%{_datadir}/djvu/djview3/desktop/register-djview-menu uninstall || :
+# ship this in favour of the djview4 package. These files were
+# installed in %post by the older djvulibre packages, but not actually
+# owned by the package (packaging bug)
+rm -f %{_datadir}/applications/djvulibre-djview3.desktop || :
+rm -f %{_datadir}/icons/hicolor/32x32/apps/djvulibre-djview3.png || :
 
-# MIME types (icons and desktop file)
-%{_datadir}/djvu/osi/desktop/register-djvu-mime install || :
+/bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 
 %preun
-# Removal, not update
+# This is the legacy script, not compliant with current packaging
+# guidelines. However, we leave it in, as the old packages didn't own
+# the icon and xml files, so we want to be sure we remove them
 if [ $1 -eq 0 ]; then
     # MIME types (icons and desktop file)
     %{_datadir}/djvu/osi/desktop/register-djvu-mime uninstall || :
 fi
 
+%postun
+if [ $1 -eq 0 ] ; then
+    /bin/touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    /usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+fi
+
+%posttrans
+/usr/bin/gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 
 %post libs -p /sbin/ldconfig
 
@@ -118,9 +142,14 @@ fi
 %files
 %defattr(-,root,root,-)
 %{_bindir}/*
-%{_datadir}/djvu/
 %{_mandir}/man1/*
 %lang(ja) %{_mandir}/ja/man1/*
+%{_datadir}/djvu/
+%{_datadir}/icons/hicolor/22x22/mimetypes/*
+%{_datadir}/icons/hicolor/32x32/mimetypes/*
+%{_datadir}/icons/hicolor/64x64/mimetypes/*
+%{_datadir}/icons/hicolor/48x48/mimetypes/*
+
 
 %files libs
 %defattr(-,root,root,-)
@@ -137,6 +166,10 @@ fi
 
 
 %changelog
+* Tue May  8 2012 Jonathan G. Underwood <rpmb@mia.theory.phys.ucl.ac.uk> - 3.5.24-4
+- Properly remove the djview3 menu entries
+- Correctly package the icon files
+
 * Sat May  5 2012 Jonathan G. Underwood <rpmb@mia.theory.phys.ucl.ac.uk> - 3.5.24-4
 - Merge in changes from Fedora master branch to el6 branch to bring version 3.5.24
 - Unregister djview3 menu/desktop entry on install if present
