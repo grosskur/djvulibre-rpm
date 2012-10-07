@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
-Version: 3.5.24
-Release: 6%{?dist}
+Version: 3.5.25.3
+Release: 1%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -18,6 +18,7 @@ BuildRequires: libjpeg-devel
 BuildRequires: libtiff-devel
 BuildRequires: xdg-utils chrpath
 BuildRequires: hicolor-icon-theme
+BuildRequires: inkscape
 
 Provides: %{name}-mozplugin = %{version}
 Obsoletes: %{name}-mozplugin < 3.5.24
@@ -55,7 +56,7 @@ Development files for DjVuLibre.
 
 
 %prep
-%setup -q
+%setup -q -n %{name}-3.5.25
 %patch0 -p1 -b .cdefs
 
 
@@ -143,7 +144,6 @@ fi
 %defattr(-,root,root,-)
 %{_bindir}/*
 %{_mandir}/man1/*
-%lang(ja) %{_mandir}/ja/man1/*
 %{_datadir}/djvu/
 %{_datadir}/icons/hicolor/22x22/mimetypes/*
 %{_datadir}/icons/hicolor/32x32/mimetypes/*
@@ -153,7 +153,7 @@ fi
 
 %files libs
 %defattr(-,root,root,-)
-%doc README COPYRIGHT COPYING NEWS TODO
+%doc README COPYRIGHT COPYING NEWS
 %{_libdir}/*.so.*
 
 %files devel
@@ -166,6 +166,10 @@ fi
 
 
 %changelog
+* Wed Oct  3 2012 Jonathan G. Underwood <jonathan.underwood@gmail.com> - 3.5.25.3-1
+- Update to version 3.5.25.3
+- Add BuildRequires for inkscape
+
 * Wed Jul 18 2012 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.24-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_18_Mass_Rebuild
 
