@@ -1,12 +1,13 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
 Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
 Patch0: djvulibre-3.5.22-cdefs.patch
+Patch1: djvulibre-3.5.25.3-cflags.patch
 
 Requires(post): xdg-utils
 Requires(preun): xdg-utils
@@ -58,6 +59,7 @@ Development files for DjVuLibre.
 %prep
 %setup -q -n %{name}-3.5.25
 %patch0 -p1 -b .cdefs
+%patch1 -p1 -b .cflags
 
 
 %build 
@@ -66,7 +68,6 @@ Development files for DjVuLibre.
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
 #sed -i 's|^runpath_var=LD_RUN_PATH|runpath_var=DIE_RPATH_DIE|g' libtool
 
-#%{__make} OPTS="%{optflags}"
 make %{?_smp_mflags} V=1
 
 
@@ -166,6 +167,9 @@ fi
 
 
 %changelog
+* Tue Oct  9 2012 Ville Skyttä <ville.skytta@iki.fi> - 3.5.25.3-2
+- Build with $RPM_OPT_FLAGS (#729469).
+
 * Wed Oct  3 2012 Jonathan G. Underwood <jonathan.underwood@gmail.com> - 3.5.25.3-1
 - Update to version 3.5.25.3
 - Add BuildRequires for inkscape
