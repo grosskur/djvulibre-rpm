@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 3%{?dist}
+Release: 4%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -167,6 +167,9 @@ fi
 
 
 %changelog
+* Fri Jan 18 2013 Adam Tkac <atkac redhat com> - 3.5.25.3-4
+- rebuild due to "jpeg8-ABI" feature drop
+
 * Fri Dec 21 2012 Adam Tkac <atkac redhat com> - 3.5.25.3-3
 - rebuild against new libjpeg
 
