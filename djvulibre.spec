@@ -1,11 +1,11 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 4%{?dist}
+Release: 5%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
-Source: http://dl.sf.net/djvu/djvulibre-%{version}.tar.gz
+Source0: http://downloads.sourceforge.net/djvu/%{name}-%{version}.tar.gz
 Patch0: djvulibre-3.5.22-cdefs.patch
 Patch1: djvulibre-3.5.25.3-cflags.patch
 
@@ -167,6 +167,9 @@ fi
 
 
 %changelog
+* Thu Jan 31 2013 François Cami <fcami@fedoraproject.org> - 3.5.25.3-5
+- fix source URL (#905953).
+
 * Fri Jan 18 2013 Adam Tkac <atkac redhat com> - 3.5.25.3-4
 - rebuild due to "jpeg8-ABI" feature drop
 
