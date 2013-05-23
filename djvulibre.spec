@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 6%{?dist}
+Release: 7%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -63,6 +63,7 @@ Development files for DjVuLibre.
 
 
 %build 
+autoreconf
 %configure --with-qt=%{_libdir}/qt-3.3 --enable-threads
 # Disable rpath on 64bit - NOT! It makes the build fail (still as of 3.5.20-2)
 #sed -i 's|^hardcode_libdir_flag_spec=.*|hardcode_libdir_flag_spec=""|g' libtool
@@ -167,6 +168,9 @@ fi
 
 
 %changelog
+* Thu May 23 2013 François Cami <fcami@fedoraproject.org> - - 3.5.25.3-7
+- Call autoreconf in %build (#925264).
+
 * Wed Feb 13 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.25.3-6
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_19_Mass_Rebuild
 
