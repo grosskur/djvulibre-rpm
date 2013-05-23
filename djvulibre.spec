@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 7%{?dist}
+Release: 8%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -19,7 +19,7 @@ BuildRequires: libjpeg-devel
 BuildRequires: libtiff-devel
 BuildRequires: xdg-utils chrpath
 BuildRequires: hicolor-icon-theme
-BuildRequires: inkscape
+BuildRequires: inkscape autoconf
 
 Provides: %{name}-mozplugin = %{version}
 Obsoletes: %{name}-mozplugin < 3.5.24
@@ -168,6 +168,9 @@ fi
 
 
 %changelog
+* Thu May 23 2013 François Cami <fcami@fedoraproject.org> - - 3.5.25.3-8
+- Add autoreconf to BuildRequires.
+
 * Thu May 23 2013 François Cami <fcami@fedoraproject.org> - - 3.5.25.3-7
 - Call autoreconf in %build (#925264).
 
