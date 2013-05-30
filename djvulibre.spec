@@ -58,6 +58,7 @@ Development files for DjVuLibre.
 
 %prep
 %setup -q -n %{name}-3.5.25
+# call autoreconf to support aarch64 before applying patches (#925264).
 autoreconf
 %patch0 -p1 -b .cdefs
 %patch1 -p1 -b .cflags
