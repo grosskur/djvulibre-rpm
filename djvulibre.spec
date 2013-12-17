@@ -1,7 +1,7 @@
 Summary: DjVu viewers, encoders, and utilities
 Name: djvulibre
 Version: 3.5.25.3
-Release: 10%{?dist}
+Release: 11%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
@@ -19,7 +19,11 @@ BuildRequires: libjpeg-devel
 BuildRequires: libtiff-devel
 BuildRequires: xdg-utils chrpath
 BuildRequires: hicolor-icon-theme
-BuildRequires: inkscape autoconf
+BuildRequires: inkscape 
+%if 0%{?fedora} > 18
+# Autoreconf needs to be called for aarch64 support - see BZ 925264
+BuildRequires: autoconf
+%endif
 
 Provides: %{name}-mozplugin = %{version}
 Obsoletes: %{name}-mozplugin < 3.5.24
@@ -59,7 +63,10 @@ Development files for DjVuLibre.
 %prep
 %setup -q -n %{name}-3.5.25
 # call autoreconf to support aarch64 before applying patches (#925264).
+%if 0%{?fedora} > 18
+# Autoreconf needs to be called for aarch64 support - see BZ 925264
 autoreconf
+%endif
 %patch0 -p1 -b .cdefs
 %patch1 -p1 -b .cflags
 
@@ -169,6 +176,9 @@ fi
 
 
 %changelog
+* Tue Dec 17 2013 Jonathan Underwood <jonathan.underwood@gmail.com> - 3.5.25.3-11
+- Only call autoreconf for Fedora 19 and higher, and not RHEL
+
 * Sat Aug 03 2013 Fedora Release Engineering <rel-eng@lists.fedoraproject.org> - 3.5.25.3-10
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_20_Mass_Rebuild
 
