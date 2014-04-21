@@ -1,11 +1,30 @@
+%global p_vendor         hhvm
+%define _name            djvulibre
+
+%if 0%{?p_vendor:1}
+  %global _orig_prefix   %{_prefix}
+  %global name_prefix    %{p_vendor}-
+
+  # Use the alternate locations for things.
+  %define _lib            lib 
+  %global _real_initrddir %{_initrddir}
+  %global _sysconfdir     %{_sysconfdir}/hhvm
+  %define _prefix         /opt/hhvm
+  %define _libdir         %{_prefix}/lib
+  %define _mandir         %{_datadir}/man
+%endif
+
+# 11503 -- Don't provide un-namespaced libraries inside rpm database
+AutoReqProv: 0
+
 Summary: DjVu viewers, encoders, and utilities
-Name: djvulibre
+Name: %{?name_prefix}%{_name}
 Version: 3.5.25.3
 Release: 11%{?dist}
 License: GPLv2+
 Group: Applications/Publishing
 URL: http://djvu.sourceforge.net/
-Source0: http://downloads.sourceforge.net/djvu/%{name}-%{version}.tar.gz
+Source0: http://downloads.sourceforge.net/djvu/%{_name}-%{version}.tar.gz
 Patch0: djvulibre-3.5.22-cdefs.patch
 Patch1: djvulibre-3.5.25.3-cflags.patch
 
@@ -61,7 +80,7 @@ Development files for DjVuLibre.
 
 
 %prep
-%setup -q -n %{name}-3.5.25
+%setup -q -n %{_name}-3.5.25
 # call autoreconf to support aarch64 before applying patches (#925264).
 %if 0%{?fedora} > 18
 # Autoreconf needs to be called for aarch64 support - see BZ 925264
